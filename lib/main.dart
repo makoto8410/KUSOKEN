@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 void main() {
@@ -28,7 +30,9 @@ class _TavHomePageState extends State<TavHomePage> {
   String currentStatus = '準備';
   final List<String> logs = [];
 
-  void addLog(String label) {
+  final String gasUrl = 'https://script.google.com/macros/s/AKfycbzns00R_lxJCCPAEHtNNWemVXitSxQWydvrfUFlX1-lji31jbPffi5nNaWlsH0XZx7E/exec';
+
+    void addLog(String label) async {
     final now = DateTime.now();
 
     setState(() {
@@ -37,9 +41,32 @@ class _TavHomePageState extends State<TavHomePage> {
         0,
         '${now.hour.toString().padLeft(2, '0')}:'
         '${now.minute.toString().padLeft(2, '0')}:'
-        '${now.second.toString().padLeft(2, '0')}  $label',
+        '${now.second.toString().padLeft(2, '0')}  $label 送信中...',
       );
     });
+
+    try {
+      final response = await http.post(
+  Uri.parse(gasUrl),
+  headers: {
+    'Content-Type': 'text/plain',
+  },
+  body: jsonEncode({
+    'event': label,
+    'status': label,
+    'source': 'Flutter',
+    'note': 'button tap',
+  }),
+);
+
+      setState(() {
+        logs.insert(0, 'GAS送信結果：${response.statusCode}');
+      });
+    } catch (e) {
+      setState(() {
+        logs.insert(0, '送信エラー：$e');
+      });
+    }
   }
 
   Widget buildEventButton(String label) {
