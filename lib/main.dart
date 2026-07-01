@@ -32,7 +32,7 @@ class _TavHomePageState extends State<TavHomePage> {
 
   final String gasUrl = 'https://script.google.com/macros/s/AKfycbzns00R_lxJCCPAEHtNNWemVXitSxQWydvrfUFlX1-lji31jbPffi5nNaWlsH0XZx7E/exec';
 
-    void addLog(String label) async {
+    void addLog(String label, String event) async {
     final now = DateTime.now();
 
     setState(() {
@@ -52,10 +52,10 @@ class _TavHomePageState extends State<TavHomePage> {
     'Content-Type': 'text/plain',
   },
   body: jsonEncode({
-    'event': label,
-    'status': label,
-    'source': 'Flutter',
-    'note': 'button tap',
+  'event': event,
+  'status': event,
+  'source': 'Flutter',
+  'note': 'button tap',
   }),
 );
 
@@ -69,9 +69,9 @@ class _TavHomePageState extends State<TavHomePage> {
     }
   }
 
-  Widget buildEventButton(String label) {
+ Widget _buildButton(String label, String event) {
     return ElevatedButton(
-      onPressed: () => addLog(label),
+     onPressed: () => addLog(label, event),
       style: ElevatedButton.styleFrom(
         minimumSize: const Size.fromHeight(72),
         shape: RoundedRectangleBorder(
@@ -87,8 +87,14 @@ class _TavHomePageState extends State<TavHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final buttons = ['出庫', '実車', '空車', '待機', '離脱', '帰庫'];
-
+   final buttons = [
+  {"label": "実車", "event": "pickup"},
+  {"label": "空車", "event": "dropoff"},
+  {"label": "Deploy", "event": "deploy"},
+  {"label": "離脱", "event": "leave"},
+  {"label": "出庫", "event": "startwork"},
+  {"label": "帰庫", "event": "endwork"},
+];
     return Scaffold(
       appBar: AppBar(
         title: const Text('KUSOKEN TAV β'),
@@ -111,15 +117,19 @@ class _TavHomePageState extends State<TavHomePage> {
             ),
             const SizedBox(height: 16),
 
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 2.2,
-              children: buttons.map(buildEventButton).toList(),
-            ),
+           GridView.count(
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  crossAxisCount: 2,
+  mainAxisSpacing: 12,
+  crossAxisSpacing: 12,
+  childAspectRatio: 2.2,
+  children: buttons.map((button) {
+    final label = button["label"] as String;
+    final event = button["event"] as String;
+    return _buildButton(label, event);
+  }).toList(),
+),
 
             const SizedBox(height: 16),
             const Align(
