@@ -29,7 +29,7 @@ class TavHomePage extends StatefulWidget {
 class _TavHomePageState extends State<TavHomePage> {
   String currentStatus = '準備';
   final List<String> logs = [];
-
+  final String driverId = "D001";
   final String gasUrl = 'https://script.google.com/macros/s/AKfycbzns00R_lxJCCPAEHtNNWemVXitSxQWydvrfUFlX1-lji31jbPffi5nNaWlsH0XZx7E/exec';
 
     void addLog(String label, String event) async {
@@ -52,6 +52,7 @@ class _TavHomePageState extends State<TavHomePage> {
     'Content-Type': 'text/plain',
   },
   body: jsonEncode({
+  'driverId': driverId,
   'event': event,
   'status': event,
   'source': 'Flutter',
